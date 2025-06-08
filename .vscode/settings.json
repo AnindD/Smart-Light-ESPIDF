@@ -1,0 +1,21 @@
+{
+  "C_Cpp.intelliSenseEngine": "default",
+  "idf.espIdfPathWin": "C:\\Users\\Anindit\\esp\\v5.4.1\\esp-idf",
+  "idf.pythonInstallPath": "C:\\Users\\Anindit\\.espressif\\tools\\idf-python\\3.11.2\\python.exe",
+  "idf.openOcdConfigs": [
+    "board/esp32-wrover-kit-3.3v.cfg"
+  ],
+  "idf.portWin": "COM6",
+  "idf.toolsPathWin": "C:\\Users\\Anindit\\.espressif",
+  "idf.customExtraVars": {
+    "IDF_TARGET": "esp32"
+  },
+  "idf.flashType": "UART",
+  "files.associations": {
+    "esp_spiffs.h": "c",
+    "cstdio": "c",
+    "fstream": "c",
+    "random": "c",
+    "esp_log.h": "c"
+  }
+}
