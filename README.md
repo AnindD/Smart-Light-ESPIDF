@@ -1,10 +1,8 @@
-# _Sample project_
+# Smart Light Project
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+Welcome to my first project using the ESP-IDF (Espressif Systems IoT Development Framework) which is a smart light project using various features of the ESP-32 such as PWM of LEDs, GPIO, Timer, and much more. 
 
 This is the simplest buildable example. The example is used by command `idf.py create-project`
-that copies the project to user specified path and set it's name. For more information follow the [docs page](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html#start-a-new-project)
-
 
 
 ## How to use example
