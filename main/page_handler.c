@@ -55,32 +55,34 @@ esp_err_t css_handler(httpd_req_t* req) {
 void flicker_pwm() {
   // Configure the LED timer & Channel
   // Frequency (Hz) can be adjusted for quicker or slower flicker
-  ledc_timer_config_t ledc_timer = {.speed_mode = LEDC_HIGH_SPEED_MODE,
-                                    .duty_resolution = LEDC_TIMER_13_BIT,
-                                    .timer_num = LEDC_TIMER_0,
-                                    .freq_hz = FREQUENCY,
-                                    .clk_cfg = LEDC_AUTO_CLK};
-  ESP_ERROR_CHECK(ledc_timer_config(&ledc_timer));
+  if (PWMOn == false) {
+    ledc_timer_config_t ledc_timer = {.speed_mode = LEDC_HIGH_SPEED_MODE,
+                                      .duty_resolution = LEDC_TIMER_13_BIT,
+                                      .timer_num = LEDC_TIMER_0,
+                                      .freq_hz = FREQUENCY,
+                                      .clk_cfg = LEDC_AUTO_CLK};
+    ESP_ERROR_CHECK(ledc_timer_config(&ledc_timer));
 
-  ledc_channel_config_t ledc_config = {.gpio_num = GPIO_MASTER_PIN,
-                                       .speed_mode = LEDC_HIGH_SPEED_MODE,
-                                       .channel = LEDC_CHANNEL_0,
-                                       .duty = 0,
-                                       .intr_type = LEDC_INTR_DISABLE,
-                                       .timer_sel = LEDC_TIMER_0,
-                                       .hpoint = 0};
-  ESP_ERROR_CHECK(ledc_channel_config(&ledc_config));
+    ledc_channel_config_t ledc_config = {.gpio_num = GPIO_MASTER_PIN,
+                                         .speed_mode = LEDC_HIGH_SPEED_MODE,
+                                         .channel = LEDC_CHANNEL_0,
+                                         .duty = 0,
+                                         .intr_type = LEDC_INTR_DISABLE,
+                                         .timer_sel = LEDC_TIMER_0,
+                                         .hpoint = 0};
+    ESP_ERROR_CHECK(ledc_channel_config(&ledc_config));
 
-  PWMOn = true;
-  // Alternate between high and low duty cycle -> high and low analog signal
-  while (PWMOn) {
-    ESP_ERROR_CHECK(
-        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, PWM_RESOLUTION));
-    ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0));
-    vTaskDelay(500);
-    ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 0));
-    ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0));
-    vTaskDelay(500);
+    PWMOn = true;
+    // Alternate between high and low duty cycle -> high and low analog signal
+    while (PWMOn) {
+      ESP_ERROR_CHECK(
+          ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, PWM_RESOLUTION));
+      ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0));
+      vTaskDelay(100);
+      ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 0));
+      ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0));
+      vTaskDelay(100);
+    }
   }
 }
 
