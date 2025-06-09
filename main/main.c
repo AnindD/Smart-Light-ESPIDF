@@ -44,6 +44,13 @@ static httpd_handle_t http_server_start() {
                        .user_ctx = NULL};
     httpd_register_uri_handler(http_server, &pwm);
 
+    // FEATURE HANDLER
+    httpd_uri_t flickering = {.uri = "/flickeringActivate",
+                              .method = HTTP_GET,
+                              .handler = flickering_handler,
+                              .user_ctx = NULL};
+    httpd_register_uri_handler(http_server, &flickering);
+
     // CSS HANDLER
     httpd_uri_t css = {.uri = "/style.css",
                        .method = HTTP_GET,

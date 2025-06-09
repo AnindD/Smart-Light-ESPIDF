@@ -1,5 +1,6 @@
 #ifndef PAGE_HANDLER_H
 #define PAGE_HANDLER_H
+#include "driver/ledc.h"
 #include "esp_event.h"
 #include "esp_http_server.h"
 #include "esp_log.h"
@@ -10,9 +11,9 @@
 #include "hal/adc_types.h"
 #include "nvs_flash.h"
 #include "secret.h"
-
 esp_err_t front_url_handler();
 esp_err_t pwm_handler();
 esp_err_t css_handler();
+esp_err_t flickering_handler();
 
 #endif
