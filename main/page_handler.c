@@ -1,6 +1,8 @@
 // front page url_handler
 #include "page_handler.h"
-#define GPIO_MASTER_PIN 17
+
+bool PWMOn = false;
+TaskHandle_t pwm_task = NULL;
 
 esp_err_t front_url_handler(httpd_req_t* req) {
   FILE* front_page_file = fopen("/spiffs/frontPage.html", "r");
@@ -50,11 +52,13 @@ esp_err_t css_handler(httpd_req_t* req) {
   return ESP_OK;
 }
 
-esp_err_t flickering_handler(httpd_req_t* req) {
+void flicker_pwm() {
+  // Configure the LED timer & Channel
+  // Frequency (Hz) can be adjusted for quicker or slower flicker
   ledc_timer_config_t ledc_timer = {.speed_mode = LEDC_HIGH_SPEED_MODE,
                                     .duty_resolution = LEDC_TIMER_13_BIT,
                                     .timer_num = LEDC_TIMER_0,
-                                    .freq_hz = 1000,
+                                    .freq_hz = FREQUENCY,
                                     .clk_cfg = LEDC_AUTO_CLK};
   ESP_ERROR_CHECK(ledc_timer_config(&ledc_timer));
 
@@ -66,13 +70,40 @@ esp_err_t flickering_handler(httpd_req_t* req) {
                                        .timer_sel = LEDC_TIMER_0,
                                        .hpoint = 0};
   ESP_ERROR_CHECK(ledc_channel_config(&ledc_config));
-  while (true) {
+
+  PWMOn = true;
+  // Alternate between high and low duty cycle -> high and low analog signal
+  while (PWMOn) {
     ESP_ERROR_CHECK(
-        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, (((1 << 13) - 1))));
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, PWM_RESOLUTION));
     ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0));
     vTaskDelay(500);
     ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 0));
     ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0));
     vTaskDelay(500);
   }
+}
+
+// Flicker LED using PWM
+// Since we use a while loop to continiously turn off and on we need to use RTOS
+// tasks to start and stop an independent task
+esp_err_t flickering_handler(httpd_req_t* req) {
+  ESP_LOGW("INFO: ", "Flickering Activated!");
+  if (pwm_task == NULL) {
+    xTaskCreate(flicker_pwm, "Flicker Task", 4096, NULL, 2, &pwm_task);
+  } else {
+    ESP_LOGE("ERROR: ", "PWM already running!");
+  }
+  return ESP_OK;
+}
+
+esp_err_t deflickering_handler(httpd_req_t* req) {
+  ESP_LOGW("INFO: ", "Deflickering Activated!");
+  PWMOn = false;
+  pwm_task = NULL;
+  esp_err_t ledc_error = ledc_stop(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 0);
+  if (ledc_error == ESP_ERR_INVALID_STATE) {
+    ESP_LOGE("ERROR: ", "LEDC was not initialized to begin with!");
+  }
+  return ESP_OK;
 }

@@ -51,6 +51,12 @@ static httpd_handle_t http_server_start() {
                               .user_ctx = NULL};
     httpd_register_uri_handler(http_server, &flickering);
 
+    httpd_uri_t deflickering = {.uri = "/flickeringDeactivate",
+                                .method = HTTP_GET,
+                                .handler = deflickering_handler,
+                                .user_ctx = NULL};
+    httpd_register_uri_handler(http_server, &deflickering);
+
     // CSS HANDLER
     httpd_uri_t css = {.uri = "/style.css",
                        .method = HTTP_GET,
