@@ -203,7 +203,7 @@ esp_err_t submit_time_handler(httpd_req_t* req) {
   }
 
   char user_data[MAX_INPUT_LEN];
-  // If request received is <= 0 then request ahs not been received
+  // If request received is <= 0 then request has not been received
   // Check httpd_req_recv() to confirm
   int user_len = httpd_req_recv(req, user_data, req->content_len);
   if (user_len <= 0) {
@@ -214,6 +214,7 @@ esp_err_t submit_time_handler(httpd_req_t* req) {
   user_data[user_len] = '\0';
   char time_extract[MAX_INPUT_LEN];
 
+  // Extract into time_extract
   if (httpd_query_key_value(user_data, "timerset", time_extract,
                             sizeof(time_extract)) == ESP_OK) {
     max_counter = atoi(time_extract);
@@ -234,7 +235,7 @@ esp_err_t submit_time_handler(httpd_req_t* req) {
   return ESP_OK;
 }
 
-// Redirect the URL
+// Redirect a standard URL
 void redirect(httpd_req_t* req, char redirect_location[]) {
   httpd_resp_set_status(req, "302");
   httpd_resp_set_hdr(req, "Location", redirect_location);
