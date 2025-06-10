@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <div class="topnav">
+        <a href="/">Home</a>
+        <a href="/PWM">PWM</a>
+        <a class="active">Timer</a>
+        <a href="/GPIO">GPIO</a>
+        <a href="/Brightness">Brightness</a>
+    </div>
+    <h1>Timer Page</h1>
+    <form action="/customTimerActivate" method="POST">
+        <label for="timerForm">Time For Light to be On:</label><br>
+        <input type="text" id="timerForm" name="timerset"><br>
+        <button type="submit" class="buttons">Submit</button>
+    </form>
+    <a href="/timerActivate"><button class="buttons">60 Second Timer</button></a>
+
+</body>
+
+</html>

@@ -1,8 +1,14 @@
 // front page url_handler
 #include "page_handler.h"
 
-bool PWMOn = false;
+// GLOBAL VARIABLES
+volatile bool PWMOn = false;
+volatile bool timerOn = true;
+uint16_t counter = 0;
+uint16_t max_counter;
 TaskHandle_t pwm_task = NULL;
+TaskHandle_t timer_task = NULL;
+gptimer_handle_t gpTimer = NULL;
 
 esp_err_t front_url_handler(httpd_req_t* req) {
   FILE* front_page_file = fopen("/spiffs/frontPage.html", "r");
@@ -92,7 +98,7 @@ void flicker_pwm() {
 esp_err_t flickering_handler(httpd_req_t* req) {
   ESP_LOGW("INFO: ", "Flickering Activated!");
   if (pwm_task == NULL) {
-    xTaskCreate(flicker_pwm, "Flicker Task", 4096, NULL, 2, &pwm_task);
+    xTaskCreate(flicker_pwm, "Flicker Task", STACK_DEPTH, NULL, 2, &pwm_task);
   } else {
     ESP_LOGE("ERROR: ", "PWM already running!");
   }
@@ -108,4 +114,129 @@ esp_err_t deflickering_handler(httpd_req_t* req) {
     ESP_LOGE("ERROR: ", "LEDC was not initialized to begin with!");
   }
   return ESP_OK;
+}
+
+/* ==[TIMER]== */
+
+esp_err_t timer_handler(httpd_req_t* req) {
+  FILE* timer_page_file = fopen("/spiffs/timer.html", "r");
+  if (!timer_page_file) {
+    return ESP_FAIL;
+  }
+  char info[256];
+  httpd_resp_set_type(req, "text/html");
+  while (fgets(info, sizeof(info), timer_page_file)) {
+    httpd_resp_sendstr_chunk(req, info);
+  }
+  fclose(timer_page_file);
+  httpd_resp_sendstr_chunk(req, NULL);
+  return ESP_OK;
+}
+
+// Interrupt Service Routine for Timer
+bool IRAM_ATTR timer_ISR(gptimer_handle_t timer,
+                         const gptimer_alarm_event_data_t* event_data,
+                         void* user_data) {
+  counter++;
+  if (counter == max_counter) {
+    counter = 0;
+    gpio_set_level(GPIO_MASTER_PIN, false);
+    ESP_ERROR_CHECK(gptimer_stop(gpTimer));
+    ESP_ERROR_CHECK(gptimer_disable(gpTimer));
+    ESP_ERROR_CHECK(gptimer_del_timer(gpTimer));
+    gpTimer = NULL;
+    timer_task = NULL;
+  }
+  return true;
+}
+
+void start_timer() {
+  // Configure the timer in RTOS task
+  ESP_ERROR_CHECK(gpio_set_direction(GPIO_MASTER_PIN, GPIO_MODE_OUTPUT));
+  gptimer_config_t gp_timer_config = {.clk_src = GPTIMER_CLK_SRC_DEFAULT,
+                                      .direction = GPTIMER_COUNT_UP,
+                                      .resolution_hz = TIMER_RESOLUTION};
+
+  ESP_ERROR_CHECK(gptimer_new_timer(&gp_timer_config, &gpTimer));
+
+  gptimer_alarm_config_t gp_alarm_config = {.alarm_count = ALARM_COUNT,
+                                            .reload_count = 0,
+                                            .flags.auto_reload_on_alarm = true};
+  gptimer_event_callbacks_t callbacks = {
+      .on_alarm = timer_ISR,
+  };
+
+  ESP_ERROR_CHECK(gptimer_register_event_callbacks(gpTimer, &callbacks, NULL));
+  ESP_ERROR_CHECK(gptimer_set_alarm_action(gpTimer, &gp_alarm_config));
+  ESP_ERROR_CHECK(gptimer_enable(gpTimer));
+  ESP_ERROR_CHECK(gptimer_start(gpTimer));
+  gpio_set_level(GPIO_MASTER_PIN, true);
+
+  // Delete the task when done
+  vTaskDelete(NULL);
+}
+
+esp_err_t timer_activate_handler(httpd_req_t* req) {
+  ESP_LOGW("INFO: ", "Timer Activated");
+  if (timer_task != NULL) {
+    ESP_ERROR_CHECK(gptimer_stop(gpTimer));
+    ESP_ERROR_CHECK(gptimer_disable(gpTimer));
+    ESP_ERROR_CHECK(gptimer_del_timer(gpTimer));
+    gpTimer = NULL;
+    timer_task = NULL;
+  }
+  max_counter = 60;
+  if (timer_task == NULL) {
+    xTaskCreate(start_timer, "Timer Task", STACK_DEPTH, NULL, 2, &timer_task);
+  }
+  redirect(req, "/Timer");
+  return ESP_OK;
+}
+
+/* ==[FORM]== */
+esp_err_t submit_time_handler(httpd_req_t* req) {
+  ESP_LOGW("INFO: ", "Form has been submitted");
+  if (req->content_len <= 0 || req->content_len >= MAX_INPUT_LEN) {
+    ESP_LOGE("ERROR: ", "Not long enough");
+    redirect(req, "/Timer");
+    return ESP_OK;
+  }
+
+  char user_data[MAX_INPUT_LEN];
+  // If request received is <= 0 then request ahs not been received
+  // Check httpd_req_recv() to confirm
+  int user_len = httpd_req_recv(req, user_data, req->content_len);
+  if (user_len <= 0) {
+    ESP_LOGE("ERROR: ", "Request not received");
+    redirect(req, "/Timer");
+    return ESP_OK;
+  }
+  user_data[user_len] = '\0';
+  char time_extract[MAX_INPUT_LEN];
+
+  if (httpd_query_key_value(user_data, "timerset", time_extract,
+                            sizeof(time_extract)) == ESP_OK) {
+    max_counter = atoi(time_extract);
+    ESP_LOGW("INFO: ", "Timer Activated");
+
+    if (timer_task != NULL) {
+      ESP_ERROR_CHECK(gptimer_stop(gpTimer));
+      ESP_ERROR_CHECK(gptimer_disable(gpTimer));
+      ESP_ERROR_CHECK(gptimer_del_timer(gpTimer));
+      gpTimer = NULL;
+      timer_task = NULL;
+    }
+    if (timer_task == NULL) {
+      xTaskCreate(start_timer, "Timer Task", STACK_DEPTH, NULL, 2, &timer_task);
+    }
+  }
+  redirect(req, "/Timer");
+  return ESP_OK;
+}
+
+// Redirect the URL
+void redirect(httpd_req_t* req, char redirect_location[]) {
+  httpd_resp_set_status(req, "302");
+  httpd_resp_set_hdr(req, "Location", redirect_location);
+  httpd_resp_send(req, NULL, 0);
 }

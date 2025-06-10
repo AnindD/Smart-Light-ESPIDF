@@ -44,6 +44,12 @@ static httpd_handle_t http_server_start() {
                        .user_ctx = NULL};
     httpd_register_uri_handler(http_server, &pwm);
 
+    httpd_uri_t timer_page = {.uri = "/Timer",
+                              .method = HTTP_GET,
+                              .handler = timer_handler,
+                              .user_ctx = NULL};
+    httpd_register_uri_handler(http_server, &timer_page);
+
     // FEATURE HANDLER
     httpd_uri_t flickering = {.uri = "/flickeringActivate",
                               .method = HTTP_GET,
@@ -56,6 +62,18 @@ static httpd_handle_t http_server_start() {
                                 .handler = deflickering_handler,
                                 .user_ctx = NULL};
     httpd_register_uri_handler(http_server, &deflickering);
+
+    httpd_uri_t timer_activate = {.uri = "/timerActivate",
+                                  .method = HTTP_GET,
+                                  .handler = timer_activate_handler,
+                                  .user_ctx = NULL};
+    httpd_register_uri_handler(http_server, &timer_activate);
+
+    httpd_uri_t custom_timer_activate = {.uri = "/customTimerActivate",
+                                         .method = HTTP_POST,
+                                         .handler = submit_time_handler,
+                                         .user_ctx = NULL};
+    httpd_register_uri_handler(http_server, &custom_timer_activate);
 
     // CSS HANDLER
     httpd_uri_t css = {.uri = "/style.css",
