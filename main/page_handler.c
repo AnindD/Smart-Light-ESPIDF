@@ -4,6 +4,7 @@
 // GLOBAL VARIABLES
 volatile bool PWMOn = false;
 volatile bool timerOn = true;
+volatile bool timer_done = false;
 uint16_t counter = 0;
 uint16_t max_counter;
 TaskHandle_t pwm_task = NULL;
@@ -137,20 +138,13 @@ esp_err_t timer_handler(httpd_req_t* req) {
 bool IRAM_ATTR timer_ISR(gptimer_handle_t timer,
                          const gptimer_alarm_event_data_t* event_data,
                          void* user_data) {
-  counter++;
-  if (counter == max_counter) {
-    counter = 0;
-    gpio_set_level(GPIO_MASTER_PIN, false);
-    ESP_ERROR_CHECK(gptimer_stop(gpTimer));
-    ESP_ERROR_CHECK(gptimer_disable(gpTimer));
-    ESP_ERROR_CHECK(gptimer_del_timer(gpTimer));
-    gpTimer = NULL;
-    timer_task = NULL;
-  }
+  gpio_set_level(GPIO_MASTER_PIN, 0);
+  timer_done = true;
   return true;
 }
 
 void start_timer() {
+  timer_done = false;
   // Configure the timer in RTOS task
   ESP_ERROR_CHECK(gpio_set_direction(GPIO_MASTER_PIN, GPIO_MODE_OUTPUT));
   gptimer_config_t gp_timer_config = {.clk_src = GPTIMER_CLK_SRC_DEFAULT,
@@ -159,9 +153,10 @@ void start_timer() {
 
   ESP_ERROR_CHECK(gptimer_new_timer(&gp_timer_config, &gpTimer));
 
-  gptimer_alarm_config_t gp_alarm_config = {.alarm_count = ALARM_COUNT,
-                                            .reload_count = 0,
-                                            .flags.auto_reload_on_alarm = true};
+  gptimer_alarm_config_t gp_alarm_config = {
+      .alarm_count = ALARM_COUNT * max_counter,
+      .reload_count = 0,
+      .flags.auto_reload_on_alarm = false};
   gptimer_event_callbacks_t callbacks = {
       .on_alarm = timer_ISR,
   };
@@ -172,6 +167,19 @@ void start_timer() {
   ESP_ERROR_CHECK(gptimer_start(gpTimer));
   gpio_set_level(GPIO_MASTER_PIN, true);
 
+  while (!timer_done) {
+    // Convert milliseconds to ticks as GPtimer uses ticks
+    vTaskDelay(pdMS_TO_TICKS(10));
+  }
+  esp_err_t gp_timer_stop_error = gptimer_stop(gpTimer);
+  if (gp_timer_stop_error == ESP_ERR_INVALID_STATE) {
+    ESP_LOGE("ERROR: ", "Timer Stopped Suddenly!");
+  }
+  ESP_ERROR_CHECK(gptimer_disable(gpTimer));
+  ESP_ERROR_CHECK(gptimer_del_timer(gpTimer));
+  gpTimer = NULL;
+  timer_task = NULL;
+
   // Delete the task when done
   vTaskDelete(NULL);
 }
@@ -179,11 +187,16 @@ void start_timer() {
 esp_err_t timer_activate_handler(httpd_req_t* req) {
   ESP_LOGW("INFO: ", "Timer Activated");
   if (timer_task != NULL) {
-    ESP_ERROR_CHECK(gptimer_stop(gpTimer));
+    timer_done = true;
+    vTaskDelete(timer_task);
+    timer_task = NULL;
+    esp_err_t gp_timer_stop_error = gptimer_stop(gpTimer);
+    if (gp_timer_stop_error == ESP_ERR_INVALID_STATE) {
+      ESP_LOGE("ERROR: ", "Timer Stopped Suddenly!");
+    }
     ESP_ERROR_CHECK(gptimer_disable(gpTimer));
     ESP_ERROR_CHECK(gptimer_del_timer(gpTimer));
     gpTimer = NULL;
-    timer_task = NULL;
   }
   max_counter = 60;
   if (timer_task == NULL) {
@@ -221,11 +234,16 @@ esp_err_t submit_time_handler(httpd_req_t* req) {
     ESP_LOGW("INFO: ", "Timer Activated");
 
     if (timer_task != NULL) {
-      ESP_ERROR_CHECK(gptimer_stop(gpTimer));
+      timer_done = true;
+      vTaskDelete(timer_task);
+      timer_task = NULL;
+      esp_err_t gp_timer_stop_error = gptimer_stop(gpTimer);
+      if (gp_timer_stop_error == ESP_ERR_INVALID_STATE) {
+        ESP_LOGE("ERROR: ", "Timer Stopped Suddenly!");
+      }
       ESP_ERROR_CHECK(gptimer_disable(gpTimer));
       ESP_ERROR_CHECK(gptimer_del_timer(gpTimer));
       gpTimer = NULL;
-      timer_task = NULL;
     }
     if (timer_task == NULL) {
       xTaskCreate(start_timer, "Timer Task", STACK_DEPTH, NULL, 2, &timer_task);
