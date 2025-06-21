@@ -57,6 +57,12 @@ static httpd_handle_t http_server_start() {
                               .user_ctx = NULL};
     httpd_register_uri_handler(http_server, &brightness);
 
+    httpd_uri_t sensor_page = {.uri = "/I2C",
+                               .method = HTTP_GET,
+                               .handler = sensor_handler,
+                               .user_ctx = NULL};
+    httpd_register_uri_handler(http_server, &sensor_page);
+
     // FEATURE HANDLER
     httpd_uri_t flickering = {.uri = "/flickeringActivate",
                               .method = HTTP_GET,

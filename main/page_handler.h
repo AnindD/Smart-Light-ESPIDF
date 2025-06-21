@@ -34,6 +34,7 @@ esp_err_t timer_activate_handler(httpd_req_t* req);
 esp_err_t submit_time_handler(httpd_req_t* req);
 esp_err_t brightness_handler(httpd_req_t* req);
 esp_err_t submit_brightness_handler(httpd_req_t* req);
+esp_err_t sensor_handler(httpd_req_t* req);
 
 void redirect(httpd_req_t* req, char redirect_location[]);
 void set_brightness(int percentage);

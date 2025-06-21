@@ -323,6 +323,22 @@ esp_err_t submit_brightness_handler(httpd_req_t* req) {
   return ESP_OK;
 }
 
+esp_err_t sensor_handler(httpd_req_t* req) {
+  FILE* i2c_file = fopen("/spiffs/i2c.html", "r");
+  if (!i2c_file) {
+    return ESP_FAIL;
+  }
+  char info[256];  // 256 for adequate size
+  httpd_resp_set_type(req, "text/html");
+  while (fgets(info, sizeof(info), i2c_file)) {
+    httpd_resp_sendstr_chunk(req, info);
+  }
+
+  fclose(i2c_file);
+  httpd_resp_sendstr_chunk(req, NULL);
+  return ESP_OK;
+}
+
 // Redirect a standard URL
 void redirect(httpd_req_t* req, char redirect_location[]) {
   httpd_resp_set_status(req, "302");
