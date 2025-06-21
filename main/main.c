@@ -29,6 +29,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t base, int32_t id,
 static httpd_handle_t http_server_start() {
   httpd_handle_t http_server = NULL;
   httpd_config_t http_config = HTTPD_DEFAULT_CONFIG();
+  http_config.max_uri_handlers = 30;
 
   if (httpd_start(&http_server, &http_config) == ESP_OK) {
     // HTML PAGE HANDLERS
@@ -49,6 +50,12 @@ static httpd_handle_t http_server_start() {
                               .handler = timer_handler,
                               .user_ctx = NULL};
     httpd_register_uri_handler(http_server, &timer_page);
+
+    httpd_uri_t brightness = {.uri = "/Brightness",
+                              .method = HTTP_GET,
+                              .handler = brightness_handler,
+                              .user_ctx = NULL};
+    httpd_register_uri_handler(http_server, &brightness);
 
     // FEATURE HANDLER
     httpd_uri_t flickering = {.uri = "/flickeringActivate",
@@ -74,6 +81,12 @@ static httpd_handle_t http_server_start() {
                                          .handler = submit_time_handler,
                                          .user_ctx = NULL};
     httpd_register_uri_handler(http_server, &custom_timer_activate);
+
+    httpd_uri_t percentage_activate = {.uri = "/submitBrightness",
+                                       .method = HTTP_POST,
+                                       .handler = submit_brightness_handler,
+                                       .user_ctx = NULL};
+    httpd_register_uri_handler(http_server, &percentage_activate);
 
     // CSS HANDLER
     httpd_uri_t css = {.uri = "/style.css",
@@ -105,23 +118,20 @@ static void initialize_wifi() {
   esp_err_t err = nvs_flash_init();
   if (err == ESP_ERR_NVS_NO_FREE_PAGES ||
       err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-    // NVS partition was truncated or is from a different IDF version
     ESP_ERROR_CHECK(nvs_flash_erase());
     err = nvs_flash_init();
   }
   ESP_ERROR_CHECK(err);
 
-  // Create TCP/IP (Internet Suite) protocol which facilitates communication
-  // protocols for internet
+  // Create TCP/IP (Internet Suite) stack.
   ESP_ERROR_CHECK(esp_netif_init());
   ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-  // Create default network interface and driver
   assert(esp_netif_create_default_wifi_sta());
   wifi_init_config_t cfg_wifi = WIFI_INIT_CONFIG_DEFAULT();
   ESP_ERROR_CHECK(esp_wifi_init(&cfg_wifi));
 
-  // Register event handler
+  // Event handlers
   ESP_ERROR_CHECK(esp_event_handler_instance_register(
       WIFI_EVENT, WIFI_EVENT_STA_START, &wifi_event_handler, NULL, NULL));
 
