@@ -231,6 +231,7 @@ esp_err_t submit_time_handler(httpd_req_t* req) {
   // Extract into time_extract
   if (httpd_query_key_value(user_data, "timerset", time_extract,
                             sizeof(time_extract)) == ESP_OK) {
+    // atoi() converts time_extract str -> int
     max_counter = atoi(time_extract);
     ESP_LOGW("INFO: ", "Timer Activated");
 
@@ -254,6 +255,7 @@ esp_err_t submit_time_handler(httpd_req_t* req) {
   return ESP_OK;
 }
 
+/* ==[BRIGHTNESS]== */
 esp_err_t brightness_handler(httpd_req_t* req) {
   FILE* brightness_page_file = fopen("/spiffs/brightness.html", "r");
   if (!brightness_page_file) {
@@ -286,7 +288,7 @@ void set_brightness(int percentage) {
                                        .hpoint = 0};
   ESP_ERROR_CHECK(ledc_channel_config(&ledc_config));
   ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0,
-                                (((1 << 13) - 1)) * (percentage / 100)));
+                                (PWM_RESOLUTION) * (percentage / 100)));
   ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0));
 }
 
@@ -323,6 +325,8 @@ esp_err_t submit_brightness_handler(httpd_req_t* req) {
   redirect(req, "/Brightness");
   return ESP_OK;
 }
+
+/* ==[SENSOR]== */
 
 esp_err_t sensor_handler(httpd_req_t* req) {
   FILE* i2c_file = fopen("/spiffs/i2c.html", "r");

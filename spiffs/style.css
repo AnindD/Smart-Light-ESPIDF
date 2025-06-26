@@ -23,6 +23,15 @@ input {
     padding: 8px 12px;
     box-sizing: border-box;
     border: 1px solid black;
+
+
+}
+
+img {
+    width: 500px;
+    height: 333px;
+    text-align: center;
+    padding: 20px;
 }
 
 .buttons {
@@ -75,11 +84,4 @@ input {
     text-align: center;
     padding: 20px;
 
-}
-
-img {
-    width: 500px;
-    height: 333px;
-    text-align: center;
-    padding: 20px;
 }
