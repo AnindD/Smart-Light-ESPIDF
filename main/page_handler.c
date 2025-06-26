@@ -84,10 +84,10 @@ void flicker_pwm() {
       ESP_ERROR_CHECK(
           ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, PWM_RESOLUTION));
       ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0));
-      vTaskDelay(100);
+      vTaskDelay(pdMS_TO_TICKS(100));
       ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 0));
       ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0));
-      vTaskDelay(100);
+      vTaskDelay(pdMS_TO_TICKS(100));
     }
   }
 }
