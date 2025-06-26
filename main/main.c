@@ -94,6 +94,18 @@ static httpd_handle_t http_server_start() {
                                        .user_ctx = NULL};
     httpd_register_uri_handler(http_server, &percentage_activate);
 
+    httpd_uri_t sensor_activate = {.uri = "/activateSensor",
+                                   .method = HTTP_GET,
+                                   .handler = start_sensor,
+                                   .user_ctx = NULL};
+    httpd_register_uri_handler(http_server, &sensor_activate);
+
+    httpd_uri_t sensor_deactivate = {.uri = "/deactivateSensor",
+                                     .method = HTTP_GET,
+                                     .handler = stop_sensor,
+                                     .user_ctx = NULL};
+    httpd_register_uri_handler(http_server, &sensor_deactivate);
+
     // CSS HANDLER
     httpd_uri_t css = {.uri = "/style.css",
                        .method = HTTP_GET,

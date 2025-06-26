@@ -68,3 +68,18 @@ input {
     background-color: #48B7FF;
     color: white;
 }
+
+.content {
+    margin: 0 auto;
+    max-width: 640px;
+    text-align: center;
+    padding: 20px;
+
+}
+
+img {
+    width: 500px;
+    height: 333px;
+    text-align: center;
+    padding: 20px;
+}

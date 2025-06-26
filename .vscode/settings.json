@@ -19,6 +19,8 @@
     "esp_log.h": "c",
     "cstdlib": "c",
     "gptimer.h": "c",
-    "esp_http_server.h": "c"
+    "esp_http_server.h": "c",
+    "i2c_master.h": "c",
+    "ledc.h": "c"
   }
 }
