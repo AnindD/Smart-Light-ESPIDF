@@ -41,7 +41,7 @@ esp_err_t pwm_handler(httpd_req_t* req) {
   return ESP_OK;
 }
 
-// css handler
+// CSS handler
 esp_err_t css_handler(httpd_req_t* req) {
   FILE* css_file = fopen("/spiffs/style.css", "r");
   if (!css_file) {
@@ -391,9 +391,9 @@ void read_bme_280_task(void* arg) {
   i2c_master_bus_handle_t bus_handle;
   i2c_master_dev_handle_t dev_handle;
   i2c_master_init_bus(&bus_handle);
-  i2c_master_init_handle(&bus_handle, &dev_handle, 0x76);
+  i2c_master_init_handle(&bus_handle, &dev_handle, BME280_DEVICE_ADDRESS);
 
-  // See compensation section of code
+  // Used for compensation when calculating temperature
   uint8_t data_cali[22] = {};
   read_byte_i2c(dev_handle, CALIBRATION_REGISTER_ADDRESS, data_cali, 22);
   uint16_t dig_T1 = (uint16_t)data_cali[0] | ((uint16_t)data_cali[1] << 8);

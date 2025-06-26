@@ -33,6 +33,7 @@
 #define CTRL_HUMIDITY_ADDRESS 0xF2
 #define MEASUREMENT_CONTROL_ADDRESS 0xF4
 #define REG_TEMP_MSB 0xFA
+#define BME280_DEVICE_ADDRESS 0x76
 
 esp_err_t front_url_handler(httpd_req_t* req);
 esp_err_t pwm_handler(httpd_req_t* req);

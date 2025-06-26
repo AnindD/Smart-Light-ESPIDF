@@ -1,30 +1,21 @@
 # Smart Light Project
 
-Welcome to my first project using the ESP-IDF (Espressif Systems IoT Development Framework) which is a smart light project using various features of the ESP-32 such as PWM of LEDs, GPIO, Timer, and much more. 
+Welcome to my project using the ESP-IDF (Espressif Systems IoT Development Framework). 
 
-This is the simplest buildable example. The example is used by command `idf.py create-project`
+This project is a smart light automation tool that allows users to control lights (whether it be an LED, or DC light bulb) using a web interface. There are various characteristics that the user can control about the lights such as allowing flickering, a certain brightness percentage they would like, timing the light to be on for certain intervals, and even adjusting the light based on the temperature in the room. 
 
+## Skills & Technologies Used
+* PWM for controlling light brightness and flickering  
+* Timer for controlling time light will stay on
+* Wi-Fi for creation of web server 
+* I2C for communication with temperature sensor (BME280) 
+* SPIFFS for storing HTML & CSS pages  
+* Git for version control
+* Breadboarding & Wiring 
 
-## How to use example
-We encourage the users to use the example as a template for the new projects.
-A recommended way is to follow the instructions on a [docs page](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html#start-a-new-project).
+## Technical Diagram 
 
-## Example folder contents
+## Video Demonstration 
 
-The project **sample_project** contains one source file in C language [main.c](main/main.c). The file is located in folder [main](main).
-
-ESP-IDF projects are built using CMake. The project build configuration is contained in `CMakeLists.txt`
-files that provide set of directives and instructions describing the project's source files and targets
-(executable, library, or both). 
-
-Below is short explanation of remaining files in the project folder.
-
-```
-├── CMakeLists.txt
-├── main
-│   ├── CMakeLists.txt
-│   └── main.c
-└── README.md                  This is the file you are currently reading
-```
-Additionally, the sample project contains Makefile and component.mk files, used for the legacy Make based build system. 
-They are not used or needed when building with CMake and idf.py.
+## User Installation 
+Ensure that ESP-IDF is installed on your computer or you have the ESP-IDF extension on Visual Studio Code. 
