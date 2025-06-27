@@ -1,4 +1,5 @@
 # Smart Light Project
+By Anindit Dewan
 
 Welcome to my project using the ESP-IDF (Espressif Systems IoT Development Framework). 
 
@@ -18,4 +19,9 @@ This project is a smart light automation tool that allows users to control light
 ## Video Demonstration 
 
 ## User Installation 
-Ensure that ESP-IDF is installed on your computer or you have the ESP-IDF extension on Visual Studio Code. 
+1. Clone the github repository 
+2. Ensure that ESP-IDF is installed on your computer, this can be done by by installing the extension on Visual Studio Code. 
+3. Open ESP-IDF terminal and enter `idf.py menuconfig` to open ESP-IDF configuration menu 
+4. Go to Partition Table ->  Custom partition CSV file -> write `partitions.csv`
+5. Escape/exit ESP-IDF configuration menu 
+6. Enter `idf.py -p COMx flash monitor` to build, flash and open device monitor on the USB port of your choice. 
