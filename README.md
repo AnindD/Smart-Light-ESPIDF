@@ -10,15 +10,13 @@ This project is a smart light automation tool that allows users to control light
 * Timer for controlling time light will stay on
 * Wi-Fi (IEEE 802.11) for creation of web server 
 * I2C protocol for communication with temperature sensor (BME280) 
-* SPIFFS for storing HTML & CSS pages  
+* SPIFFS (SPI Flash File System) for storing HTML & CSS pages into microcontroller flash memory   
 * Git for version control
 * Breadboarding & wiring 
 
-## Diagram
-
-
 ## Video Demonstration 🎥
 [![Watch the video](https://i9.ytimg.com/vi/U94yFOsOFqo/mqdefault.jpg?v=685f0139&sqp=CKCD_MIG&rs=AOn4CLDL8J9zJWDM4vXsjGC30Pri4tqNeg)](https://www.youtube.com/watch?v=U94yFOsOFqo)
+[Click here!](https://www.youtube.com/watch?v=U94yFOsOFqo)
 
 ## User Installation ⚙️
 1. Clone the github repository 
@@ -30,6 +28,9 @@ This project is a smart light automation tool that allows users to control light
 7. Escape/exit ESP-IDF configuration menu 
 8. Enter `idf.py -p COMx flash monitor` to build, flash and open device monitor on the USB (`COMx`) port of your choice. 
 
+## Block Diagram 👷
+![alt text](Smart_Light_Block_Diagram.png)
+
 ## Things To Improve 🔨  
 * UI of website 
-* Integrate OLED Display for temperature sensor 
+* Integrate OLED display for temperature sensor 
