@@ -287,8 +287,8 @@ void set_brightness(int percentage) {
                                        .timer_sel = LEDC_TIMER_0,
                                        .hpoint = 0};
   ESP_ERROR_CHECK(ledc_channel_config(&ledc_config));
-  ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0,
-                                (PWM_RESOLUTION) * (percentage / 100)));
+  uint32_t duty = (PWM_RESOLUTION * percentage) / 100;
+  ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, duty));
   ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0));
 }
 
@@ -323,6 +323,14 @@ esp_err_t submit_brightness_handler(httpd_req_t* req) {
     }
   }
   redirect(req, "/Brightness");
+  return ESP_OK;
+}
+
+esp_err_t detach_brightness(httpd_req_t* req) {
+  esp_err_t ledc_error = ledc_stop(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 0);
+  if (ledc_error == ESP_ERR_INVALID_STATE) {
+    ESP_LOGE("ERROR: ", "LEDC was not initialized to begin with!");
+  }
   return ESP_OK;
 }
 

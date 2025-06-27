@@ -50,6 +50,7 @@ esp_err_t read_byte_i2c(i2c_master_dev_handle_t dev_handle, uint8_t reg_addr,
                         uint8_t* data, size_t len);
 esp_err_t start_sensor();
 esp_err_t stop_sensor();
+esp_err_t detach_brightness(httpd_req_t* req);
 
 void redirect(httpd_req_t* req, char redirect_location[]);
 void set_brightness(int percentage);

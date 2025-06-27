@@ -94,6 +94,12 @@ static httpd_handle_t http_server_start() {
                                        .user_ctx = NULL};
     httpd_register_uri_handler(http_server, &percentage_activate);
 
+    httpd_uri_t percentage_deactivate = {.uri = "/detachBrightness",
+                                         .method = HTTP_GET,
+                                         .handler = detach_brightness,
+                                         .user_ctx = NULL};
+    httpd_register_uri_handler(http_server, &percentage_deactivate);
+
     httpd_uri_t sensor_activate = {.uri = "/activateSensor",
                                    .method = HTTP_GET,
                                    .handler = start_sensor,
