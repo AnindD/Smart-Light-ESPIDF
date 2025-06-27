@@ -14,6 +14,10 @@ This project is a smart light automation tool that allows users to control light
 * Git for version control
 * Breadboarding & wiring 
 
+## Block Diagram 👷
+![alt text](Smart_Light_Block_Diagram.png)
+
+
 ## Video Demonstration 🎥
 [![Watch the video](https://i9.ytimg.com/vi/U94yFOsOFqo/mqdefault.jpg?v=685f0139&sqp=CKCD_MIG&rs=AOn4CLDL8J9zJWDM4vXsjGC30Pri4tqNeg)](https://www.youtube.com/watch?v=U94yFOsOFqo)
 [Click here!](https://www.youtube.com/watch?v=U94yFOsOFqo)
@@ -28,9 +32,7 @@ This project is a smart light automation tool that allows users to control light
 7. Escape/exit ESP-IDF configuration menu 
 8. Enter `idf.py -p COMx flash monitor` to build, flash and open device monitor on the USB (`COMx`) port of your choice. 
 
-## Block Diagram 👷
-![alt text](Smart_Light_Block_Diagram.png)
-
+ 
 ## Things To Improve 🔨  
 * UI of website 
 * Integrate OLED display for temperature sensor 
