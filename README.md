@@ -1,5 +1,6 @@
 # Smart Light Project 💡
 By Anindit Dewan
+
 Last Updated: June 2025 
 
 ## Summary 📖
