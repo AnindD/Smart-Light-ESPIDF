@@ -1,6 +1,8 @@
 # Smart Light Project 💡
 By Anindit Dewan
+Last Updated: June 2025 
 
+## Summary 📖
 Welcome to my project using the ESP-IDF (Espressif Systems IoT Development Framework). 
 
 This project is a smart light automation tool that allows users to control lights (whether it be an LED, or DC light bulb) using a web interface. There are various characteristics that the user can control about the lights such as allowing flickering, a certain brightness percentage they would like, timing the light to be on for certain intervals, and even adjusting the light based on the temperature in the room. 
@@ -20,7 +22,6 @@ This project is a smart light automation tool that allows users to control light
 
 ## Video Demonstration 🎥
 [![Watch the video](https://i9.ytimg.com/vi/U94yFOsOFqo/mqdefault.jpg?v=685f0139&sqp=CKCD_MIG&rs=AOn4CLDL8J9zJWDM4vXsjGC30Pri4tqNeg)](https://www.youtube.com/watch?v=U94yFOsOFqo)
-[Click here!](https://www.youtube.com/watch?v=U94yFOsOFqo)
 
 ## User Installation ⚙️
 1. Clone the github repository 
