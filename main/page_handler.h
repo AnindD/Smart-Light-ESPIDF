@@ -17,6 +17,7 @@
 #include "nvs_flash.h"
 #include "secret.h"
 
+// MACROS
 #define GPIO_MASTER_PIN 17
 #define PWM_RESOLUTION ((1 << 13) - 1)  // 2^13 - 1
 #define FREQUENCY 1000
@@ -35,6 +36,16 @@
 #define REG_TEMP_MSB 0xFA
 #define BME280_DEVICE_ADDRESS 0x76
 
+// GLOBAL VARIABLES
+volatile bool PWMOn = false;
+volatile bool timer_done = false;
+uint16_t max_counter;
+TaskHandle_t pwm_task = NULL;
+TaskHandle_t timer_task = NULL;
+TaskHandle_t sensor_task = NULL;
+gptimer_handle_t gpTimer = NULL;
+
+// FUNCTION HEADERS
 esp_err_t front_url_handler(httpd_req_t* req);
 esp_err_t pwm_handler(httpd_req_t* req);
 esp_err_t css_handler(httpd_req_t* req);

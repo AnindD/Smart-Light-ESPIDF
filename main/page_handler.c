@@ -1,15 +1,6 @@
 // front page url_handler
 #include "page_handler.h"
 
-// GLOBAL VARIABLES
-volatile bool PWMOn = false;
-volatile bool timer_done = false;
-uint16_t max_counter;
-TaskHandle_t pwm_task = NULL;
-TaskHandle_t timer_task = NULL;
-TaskHandle_t sensor_task = NULL;
-gptimer_handle_t gpTimer = NULL;
-
 esp_err_t front_url_handler(httpd_req_t* req) {
   FILE* front_page_file = fopen("/spiffs/frontPage.html", "r");
   if (!front_page_file) {
@@ -57,6 +48,8 @@ esp_err_t css_handler(httpd_req_t* req) {
   httpd_resp_sendstr_chunk(req, NULL);
   return ESP_OK;
 }
+
+/* ==[PWM]== */
 
 void flicker_pwm() {
   // Configure the LED timer & Channel
@@ -228,7 +221,6 @@ esp_err_t submit_time_handler(httpd_req_t* req) {
   user_data[user_len] = '\0';
   char time_extract[MAX_INPUT_LEN];
 
-  // Extract into time_extract
   if (httpd_query_key_value(user_data, "timerset", time_extract,
                             sizeof(time_extract)) == ESP_OK) {
     // atoi() converts time_extract str -> int
