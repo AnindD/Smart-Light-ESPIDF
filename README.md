@@ -18,12 +18,11 @@ This project is a smart light automation tool that allows users to control light
 * FreeRTOS for managing ESP32 tasks 
 * Breadboarding & wiring 
 
-## Block Diagram 👷
-![alt text](Smart_Light_Block_Diagram.png)
-
-
 ## Video Demonstration 🎥
 [![Watch the video](https://i9.ytimg.com/vi/U94yFOsOFqo/mqdefault.jpg?v=685f0139&sqp=CKCD_MIG&rs=AOn4CLDL8J9zJWDM4vXsjGC30Pri4tqNeg)](https://www.youtube.com/watch?v=U94yFOsOFqo)
+
+## Block Diagram 👷
+![alt text](Smart_Light_Block_Diagram.png)
 
 ## User Installation ⚙️
 1. Clone the github repository 
