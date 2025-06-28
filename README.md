@@ -4,9 +4,9 @@ By Anindit Dewan
 Last Updated: June 2025 
 
 ## Summary 📖
-Welcome to my project using the ESP-IDF (Espressif Systems IoT Development Framework). 
+Welcome to my personal project using the ESP-IDF (Espressif Systems IoT Development Framework). 
 
-This project is a smart light automation tool that allows users to control lights (whether it be an LED, or DC light bulb) using a web interface. There are various characteristics that the user can control about the lights such as allowing flickering, a certain brightness percentage they would like, timing the light to be on for certain intervals, and even adjusting the light based on the temperature in the room. 
+This project is a smart light automation tool that allows users to control lights (whether it be an LED, or DC light bulb) using a web interface. There are various characteristics that the user can control about the lights such as allowing flickering, a certain brightness percentage they would like, timing the light to be on for certain intervals, and even adjusting the light based on the temperature in the room all from the comfort of their very own computer desk. 
 
 ## Skills & Technologies Used 🖥️
 * Pulse Width Modulation (PWM) for controlling light brightness and flickering  
