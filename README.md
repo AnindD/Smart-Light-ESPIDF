@@ -19,7 +19,7 @@ This project is a smart light automation tool that allows users to control light
 * Breadboarding & wiring 
 
 ## Video Demonstration 🎥
-[![Watch the video](https://img.youtube.com/vi/U94yFOsOFqo/0.jpg)](https://www.youtube.com/watch?v=U94yFOsOFqo)
+[![Watch the video](https://img.youtube.com/vi/U94yFOsOFqo/0.jpg)](https://www.youtube.com/watch?v=bj-UH3j_32s)
 
 ## Block Diagram 👷
 ![alt text](Smart_Light_Block_Diagram.png)
